@@ -1,0 +1,27 @@
+{
+  "name": "wtf10029/getui",
+  "description": "个推v2SDK",
+  "keywords": [
+    "Getui",
+    "个推",
+    "php",
+    "pushapi"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "741321587@qq.com",
+      "homepage": "https://github.com/wtf10029/getui"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Wtf10029\\Getui\\": "src/"
+    }
+  },
+  "require": {
+    "guzzlehttp/guzzle": "^6.2 || ^7.0",
+    "ext-json": "*",
+    "doctrine/cache": "^1.10"
+  }
+}
