@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Getui\Message;
+namespace Wtf10029\Getui\Message;
 
-use Getui\Message\MessageInterface;
+use Wtf10029\Getui\Message\MessageInterface;
 
 /**
  * Class NotificationMessage
@@ -11,21 +11,24 @@ use Getui\Message\MessageInterface;
  */
 class NotificationMessage implements MessageInterface
 {
-    public function toArray():array
+    public function toArray(): array
     {
         $data = $this->data;
         $data['payload'] = json_encode($data['payload']);
-        return ['notification'=>$data];
+        return ['notification' => $data];
     }
+
     protected $data = [
-        'click_type'=>'payload'
+        'click_type' => 'payload'
     ];
+
     public function setTitle(string $title)
     {
         $this->data['payload']['title'] = $title;
         $this->data['title'] = $title;
         return $this;
     }
+
     public function setBody(string $body)
     {
         $this->data['payload']['body'] = $body;
@@ -50,7 +53,7 @@ class NotificationMessage implements MessageInterface
      */
     public function setPayload(array $payload)
     {
-        $this->data['payload'] = array_merge($this->data['payload'],$payload);
+        $this->data['payload'] = array_merge($this->data['payload'], $payload);
         return $this;
     }
 }

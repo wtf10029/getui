@@ -18,22 +18,22 @@ class Config
     }
 
     /**
-     * @param $app_key
+     * @param $appKey
      * @return $this
      */
-    public function setAppKey(string $app_key): Config
+    public function setAppKey(string $appKey): Config
     {
-        $this->config['app_key'] = $app_key;
+        $this->config['app_key'] = $appKey;
         return $this;
     }
 
     /**
-     * @param string $master_secret
+     * @param string $masterSecret
      * @return $this
      */
-    public function setMasterSecret(string $master_secret): Config
+    public function setMasterSecret(string $masterSecret): Config
     {
-        $this->config['master_secret'] = $master_secret;
+        $this->config['master_secret'] = $masterSecret;
         return $this;
     }
 

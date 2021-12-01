@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Getui\Message;
+namespace Wtf10029\Getui\Message;
 
-use Getui\Message\MessageInterface;
+use Wtf10029\Getui\Message\MessageInterface;
 
 /**
  * Class TransmissionMessage
@@ -11,7 +11,7 @@ use Getui\Message\MessageInterface;
  */
 class TransmissionMessage implements MessageInterface
 {
-    public function toArray():array
+    public function toArray(): array
     {
         return [];
     }

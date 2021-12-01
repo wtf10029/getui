@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Getui\Message;
+namespace Wtf10029\Getui\Message;
 
 
 interface MessageInterface
