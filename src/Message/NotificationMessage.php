@@ -3,14 +3,20 @@
 
 namespace Wtf10029\Getui\Message;
 
-use Wtf10029\Getui\Message\MessageInterface;
-
 /**
  * Class NotificationMessage
  * @package Getui\Message
  */
 class NotificationMessage implements MessageInterface
 {
+
+    protected $data = [
+        'click_type' => 'payload'
+    ];
+
+    /**
+     * @return \string[][]
+     */
     public function toArray(): array
     {
         $data = $this->data;
@@ -18,10 +24,18 @@ class NotificationMessage implements MessageInterface
         return ['notification' => $data];
     }
 
-    protected $data = [
-        'click_type' => 'payload'
-    ];
+    public function setPushMessage()
+    {
+        return $this->toArray();
 
+    }
+
+
+    /**
+     *
+     * @param string $title
+     * @return $this
+     */
     public function setTitle(string $title)
     {
         $this->data['payload']['title'] = $title;
@@ -29,6 +43,12 @@ class NotificationMessage implements MessageInterface
         return $this;
     }
 
+
+    /**
+     *
+     * @param string $body
+     * @return $this
+     */
     public function setBody(string $body)
     {
         $this->data['payload']['body'] = $body;
@@ -37,6 +57,7 @@ class NotificationMessage implements MessageInterface
     }
 
     /**
+     *
      * @param string $clickType
      * @return $this
      */

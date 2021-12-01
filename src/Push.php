@@ -3,8 +3,7 @@
 
 namespace Wtf10029\Getui;
 
-use Getui\Message\MessageInterface;
-use Getui\Message\NotificationMessage;
+use Wtf10029\Getui\Message\NotificationMessage;
 
 /**
  * Class Push
@@ -17,28 +16,42 @@ class Push
     /**
      * 单推 Client ID
      * @param array $cid
-     * @param NotificationMessage $message
+     * @param  $message
      * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function toSingleCid(array $cid, NotificationMessage $message)
+    public function toSingleCid(array $cid, $message)
     {
-        $data = (new HttpRequest())->
-        withApi('/push/single/cid')->
-        withMethod('POST')->
-        withConfig($this->config)->
-        withToken($this->auth)->
-        withData([
-            'request_id'   => rand(11111100000, 9999999900009),
-            'settings'     => [
-                'ttl' => 3600000
-            ],
-            'audience'     => [
-                'cid' => $cid
-            ],
-            'push_message' => $message->toArray()
-        ])->
-        send();
+        $message = $message->toArray();
+        $data = (new HttpRequest())->withApi('/push/single/cid')
+            ->withMethod('POST')
+            ->withConfig($this->config)
+            ->withToken($this->auth)
+            ->withData([
+                'request_id'   => rand(11111100000, 9999999900009),
+                'settings'     => [
+                    'ttl' => 3600000
+                ],
+                'audience'     => [
+                    'cid' => $cid
+                ],
+                'push_message' => $message,
+                'push_channel' => [
+                    'android' => ['ups' => $message],
+                    'ios'     => [
+                        'type'       => 'notify',
+                        'payload'    => $message['notification']['payload'],
+                        'aps'        => [
+                            'alert'             => [
+                                'title' => $message['notification']['title'],
+                                'body'  => $message['notification']['body'],
+                            ],
+                            'content-available' => 0
+                        ],
+                        "auto_badge" => "+1"
+                    ]
+                ]
+            ])->send();
         if (!(isset($data['msg']) && $data['msg'] === 'success' && isset($data['code']) && $data['code'] === 0)) {
             throw new \Exception(isset($data['msg']) ? $data['msg'] : '接口错误');
         }
@@ -51,7 +64,7 @@ class Push
      * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function toAll(NotificationMessage $message)
+    public function toAll($message)
     {
         return (new HttpRequest())->
         withApi('/push/all')->
@@ -66,8 +79,7 @@ class Push
             ],
             'audience'     => 'all',
             'push_message' => $message->toArray()
-        ])->
-        send();
+        ])->send();
     }
 
     /**
@@ -79,19 +91,18 @@ class Push
      */
     public function toSingleAlias(array $alias, NotificationMessage $message)
     {
-        return (new HttpRequest())->
-        withApi('/push/single/alias')->
-        withMethod('POST')->
-        withConfig($this->config)->
-        withToken($this->auth)->
-        withData([
-            'audience'     => [
-                'alias' => $alias
-            ],
-            'request_id'   => rand(11111100000, 9999999900009),
-            'push_message' => $message->toArray()
-        ])->
-        send();
+        return (new HttpRequest())->withApi('/push/single/alias')
+            ->withMethod('POST')
+            ->withConfig($this->config)
+            ->withToken($this->auth)
+            ->withData([
+                'audience'     => [
+                    'alias' => $alias
+                ],
+                'request_id'   => rand(11111100000, 9999999900009),
+                'push_message' => $message->toArray()
+            ])->send();
     }
+
 
 }
