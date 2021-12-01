@@ -130,10 +130,11 @@ class HttpRequest
             return json_decode($this->client->request($this->method,
                 $this->gateway . $this->config->getAppId() . $this->api, [
                     'headers' => $this->headers,
-                    'body'    => json_encode($this->data)
+                    'body'    => json_encode($this->data),
+                    'timeout' => 5
                 ])->getBody()->getContents(), 1);
         } catch (\GuzzleHttp\Exception\ClientException $exception) {
-            $data = json_encode($exception->getResponse()->getBody()->getContents(), 1);
+            $data = json_decode($exception->getResponse()->getBody()->getContents(), true);
             if ($exception->getResponse()->getStatusCode() == 400 && $data['code'] == 20001) {
                 $this->authorization->refurbishToken();
                 $this->send();

@@ -22,8 +22,7 @@ class TransmissionMessage implements MessageInterface
 
     public function setPushMessage()
     {
-        return json_encode($this->data['payload']);
-
+        return ['transmission' => json_encode($this->data['payload'])];
     }
 
 

@@ -22,41 +22,46 @@ class Push
      */
     public function toSingleCid(array $cid, $message)
     {
+        $pushMessage = $message->setPushMessage();
         $message = $message->toArray();
+        $withData = [
+            'request_id'   => rand(11111100000, 9999999900009),
+            'settings'     => [
+                'ttl' => 3600000
+            ],
+            'audience'     => [
+                'cid' => $cid
+            ],
+            'push_message' => $pushMessage,
+            'push_channel' => [
+                'android' => ['ups' => $pushMessage],
+                'ios'     => [
+                    'type'       => 'notify',
+                    'payload'    => json_encode($message['notification']['payload']),
+                    'aps'        => [
+                        'alert'             => [
+                            'title' => $message['notification']['title'],
+                            'body'  => $message['notification']['body'],
+                        ],
+                        'content-available' => 0
+                    ],
+                    "auto_badge" => "+1"
+                ]
+            ]
+        ];
         $data = (new HttpRequest())->withApi('/push/single/cid')
             ->withMethod('POST')
             ->withConfig($this->config)
             ->withToken($this->auth)
-            ->withData([
-                'request_id'   => rand(11111100000, 9999999900009),
-                'settings'     => [
-                    'ttl' => 3600000
-                ],
-                'audience'     => [
-                    'cid' => $cid
-                ],
-                'push_message' => $message,
-                'push_channel' => [
-                    'android' => ['ups' => $message],
-                    'ios'     => [
-                        'type'       => 'notify',
-                        'payload'    => $message['notification']['payload'],
-                        'aps'        => [
-                            'alert'             => [
-                                'title' => $message['notification']['title'],
-                                'body'  => $message['notification']['body'],
-                            ],
-                            'content-available' => 0
-                        ],
-                        "auto_badge" => "+1"
-                    ]
-                ]
-            ])->send();
+            ->withData($withData)
+            ->send();
         if (!(isset($data['msg']) && $data['msg'] === 'success' && isset($data['code']) && $data['code'] === 0)) {
             throw new \Exception(isset($data['msg']) ? $data['msg'] : '接口错误');
         }
         return $data;
     }
+
+
 
     /**
      * 推送消息到所有用户
