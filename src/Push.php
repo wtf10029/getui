@@ -22,6 +22,46 @@ class Push
      */
     public function toSingleCid(array $cid, $message)
     {
+        $withData = $this->getWithData($message, ['cid' => $cid]);
+        $data = (new HttpRequest())->withApi('/push/single/cid')
+            ->withMethod('POST')
+            ->withConfig($this->config)
+            ->withToken($this->auth)
+            ->withData($withData)
+            ->send();
+        if (!(isset($data['msg']) && $data['msg'] === 'success' && isset($data['code']) && $data['code'] === 0)) {
+            throw new \Exception(isset($data['msg']) ? $data['msg'] : '接口错误');
+        }
+        return $data;
+    }
+
+
+    /**
+     * 推送消息到所有用户
+     * @param  $message
+     * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function toAll($message)
+    {
+        $withData = $this->getWithData($message, 'all');
+        return (new HttpRequest())
+            ->withApi('/push/all')
+            ->withMethod('POST')
+            ->withConfig($this->config)
+            ->withToken($this->auth)
+            ->withData($withData)
+            ->send();
+    }
+
+
+    /**
+     * @param $message
+     * @param $audience
+     * @return array
+     */
+    public function getWithData($message, $audience)
+    {
         $pushMessage = $message->setPushMessage();
         $message = $message->toArray();
         $withData = [
@@ -29,9 +69,7 @@ class Push
             'settings'     => [
                 'ttl' => 3600000
             ],
-            'audience'     => [
-                'cid' => $cid
-            ],
+            'audience'     => $audience,
             'push_message' => $pushMessage,
             'push_channel' => [
                 'android' => ['ups' => $pushMessage],
@@ -49,64 +87,25 @@ class Push
                 ]
             ]
         ];
-        $data = (new HttpRequest())->withApi('/push/single/cid')
-            ->withMethod('POST')
-            ->withConfig($this->config)
-            ->withToken($this->auth)
-            ->withData($withData)
-            ->send();
-        if (!(isset($data['msg']) && $data['msg'] === 'success' && isset($data['code']) && $data['code'] === 0)) {
-            throw new \Exception(isset($data['msg']) ? $data['msg'] : '接口错误');
-        }
-        return $data;
-    }
 
-
-
-    /**
-     * 推送消息到所有用户
-     * @param NotificationMessage $message
-     * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function toAll($message)
-    {
-        return (new HttpRequest())->
-        withApi('/push/all')->
-        withMethod('POST')->
-        withConfig($this->config)->
-        withToken($this->auth)->
-        withData([
-            'request_id'   => rand(11111100000, 9999999900009),
-//            'group_name'=>'',
-            'settings'     => [
-                'ttl' => 3600000
-            ],
-            'audience'     => 'all',
-            'push_message' => $message->toArray()
-        ])->send();
+        return $withData;
     }
 
     /**
      * 单推 Alias
      * @param array $alias
-     * @param NotificationMessage $message
+     * @param  $message
      * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function toSingleAlias(array $alias, NotificationMessage $message)
+    public function toSingleAlias(array $alias, $message)
     {
+        $withData = $this->getWithData($message, ['alias' => $alias]);
         return (new HttpRequest())->withApi('/push/single/alias')
             ->withMethod('POST')
             ->withConfig($this->config)
             ->withToken($this->auth)
-            ->withData([
-                'audience'     => [
-                    'alias' => $alias
-                ],
-                'request_id'   => rand(11111100000, 9999999900009),
-                'push_message' => $message->toArray()
-            ])->send();
+            ->withData($withData)->send();
     }
 
 
