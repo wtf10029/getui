@@ -9,14 +9,12 @@ $config = (new \Getui\Config())->
 ```
 ##### 缓存
 ```php
-$cache = new Doctrine\Common\Cache\RedisCache();
 $redis = new \Redis();
 $redis->connect('127.0.0.1',6379,0);
-$cache->setRedis($redis);
 ```
 ##### Authorization
 ```php
-$authorization = (new \Getui\Authorization($config))->withCacheDriver($cache);
+$authorization = (new \Getui\Authorization($config))->withCacheDriver($redis);
 ```
 ##### 绑定别名
 ```php

@@ -27,10 +27,10 @@ class Authorization
 
     /**
      * 设置缓存驱动
-     * @param Cache $cache
+     * @param \Redis $cache
      * @return $this
      */
-    public function withCacheDriver(Cache $cache): self
+    public function withCacheDriver(\Redis $cache): self
     {
         $this->cache = $cache;
         return $this;
@@ -44,16 +44,16 @@ class Authorization
     public function getTokenAsString(): string
     {
         $key = 'cache:getui:token:' . $this->config->getAppId();
-        if ($this->cache instanceof Cache && $this->cache->contains($key)) {
-            return $this->cache->fetch($key);
+        if ($this->cache instanceof \Redis && $token = $this->cache->get($key)) {
+            return $token;
         }
         $res = (new HttpRequest())->withConfig($this->config)->withData([
         ])->withApi('/auth')->withMethod('POST')->send();
         if (isset($res['code']) && $res['code'] === 0) {
             $expire_time = intval($res['data']['expire_time'] / 1000);
             $token = $res['data']['token'];
-            if ($this->cache instanceof Cache) {
-                $this->cache->save($key, $token, $expire_time - time());
+            if ($this->cache instanceof \Redis ) {
+                $this->cache->set($key, $token, $expire_time - time());
             }
             return $token;
         }
