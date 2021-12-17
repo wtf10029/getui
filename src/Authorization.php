@@ -4,7 +4,6 @@
 namespace Wtf10029\Getui;
 
 
-
 /**
  * Class Authorization
  * @package Getui
@@ -52,8 +51,8 @@ class Authorization
         if (isset($res['code']) && $res['code'] === 0) {
             $expire_time = intval($res['data']['expire_time'] / 1000);
             $token = $res['data']['token'];
-            if ($this->cache instanceof \Redis ) {
-                $this->cache->set($key, $token, $expire_time - time());
+            if ($this->cache instanceof \Redis) {
+                $this->cache->set($key, $token, $expire_time - time() - 120);
             }
             return $token;
         }
@@ -74,7 +73,7 @@ class Authorization
             $expire_time = intval($res['data']['expire_time'] / 1000);
             $token = $res['data']['token'];
             if ($this->cache instanceof \Redis) {
-                $this->cache->set($key, $token, $expire_time - time());
+                $this->cache->set($key, $token, $expire_time - time()- 120);
             }
             return $token;
         }
