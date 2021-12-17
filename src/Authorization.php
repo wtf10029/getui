@@ -3,7 +3,7 @@
 
 namespace Wtf10029\Getui;
 
-use Doctrine\Common\Cache\Cache;
+
 
 /**
  * Class Authorization
@@ -16,7 +16,7 @@ class Authorization
      */
     private $config;
     /**
-     * @var Cache
+     * @var \Redis
      */
     protected $cache;
 
@@ -73,8 +73,8 @@ class Authorization
         if (isset($res['code']) && $res['code'] === 0) {
             $expire_time = intval($res['data']['expire_time'] / 1000);
             $token = $res['data']['token'];
-            if ($this->cache instanceof Cache) {
-                $this->cache->save($key, $token, $expire_time - time());
+            if ($this->cache instanceof \Redis) {
+                $this->cache->set($key, $token, $expire_time - time());
             }
             return $token;
         }
