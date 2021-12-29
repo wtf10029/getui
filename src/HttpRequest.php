@@ -134,8 +134,8 @@ class HttpRequest
                     'timeout' => 5
                 ])->getBody()->getContents(), 1);
         } catch (\GuzzleHttp\Exception\ClientException $exception) {
-            $data = json_decode($exception->getResponse()->getBody()->getContents(), true);
-            if ($exception->getResponse()->getStatusCode() == 400 && $data['code'] == 20001) {
+//            $data = json_decode($exception->getResponse()->getBody()->getContents(), true);
+            if ($exception->getResponse()->getStatusCode() == 401) {
                 $this->authorization->getTokenAsString();
                 $this->send();
             }
