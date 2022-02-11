@@ -64,6 +64,7 @@ class Push
     {
         $pushMessage = $message->setPushMessage();
         $message = $message->toArray();
+        $payload = json_encode($message['notification']['payload']);
         $withData = [
             'request_id'   => rand(11111100000, 9999999900009),
             'settings'     => [
@@ -72,10 +73,19 @@ class Push
             'audience'     => $audience,
             'push_message' => $pushMessage,
             'push_channel' => [
-                'android' => ['ups' => $pushMessage],
-                'ios'     => [
+                'android' => [
+                    'ups' => [
+                        "notification" => [
+                            "title"      => $message['notification']['title'],
+                            "body"       => $message['notification']['body'],
+                            "click_type" => "intent",
+                            "intent"     => "intent:#Intent;action=android.intent.action.oppopush;launchFlags=0x14000000;component=com.nwppm.nwp/io.dcloud.PandoraEntry;S.UP-OL-SU=true;S.title={$message['notification']['title']};S.content={$message['notification']['body']}};S.payload={$payload}};end"
+                        ]
+                    ]
+                ],
+                'ios' => [
                     'type'       => 'notify',
-                    'payload'    => json_encode($message['notification']['payload']),
+                    'payload'    => $payload,
                     'aps'        => [
                         'alert'             => [
                             'title' => $message['notification']['title'],
