@@ -56,7 +56,7 @@ class Authorization
             }
             return $token;
         }
-        throw new \Exception('个推Token 获取失败');
+        throw new \Exception('个推Token 获取失败!');
     }
 
     /**
